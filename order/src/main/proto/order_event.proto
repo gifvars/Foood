@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package order.events;
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+message OrderEvent {
+  int32 user_id = 1;
+  repeated CartItem order_items = 2;
+  int64 order_price = 3;        // BigDecimal as string
+  int64 tax = 4;                // BigDecimal as string
+  int64 discount_amount = 5;    // BigDecimal as string
+  OrderStatus order_status = 6;
+  int32 restaurant_id = 7;
+  int32 driver_id = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message CartItem {
+  int32 productId = 1;
+  int32 quantity = 2;
+  int64 totalPrice = 4;
+
+}
+
+enum OrderStatus {
+  UNKNOWN = 0;
+  PENDING = 1;
+  CONFIRMED = 2;
+  DELIVERED = 3;
+  CANCELLED = 4;
+}
+
