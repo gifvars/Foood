@@ -31,10 +31,10 @@ public class KafkaProducer {
                 .build();
 
         try {
-            kafkaTemplate.send("persons", event.toByteArray());
+            kafkaTemplate.send("register.order", event.toByteArray());
             log.info("Success sending event to Kafka: {}", event);
         } catch (Exception e) {
-            log.error("Error sending Person create event: {}", event);
+            log.error("Error sending order create event: {}", event);
         }
     }
 }
