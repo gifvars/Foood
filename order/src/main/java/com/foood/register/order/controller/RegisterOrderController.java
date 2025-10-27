@@ -21,7 +21,7 @@ public class RegisterOrderController {
     @PostMapping("/register/order")
     public ResponseEntity<String> create(@NotNull @RequestBody Order order) {
         System.out.println(order);
-        registerOrderService.sendOrderEvent(order);
+        registerOrderService.registerOrder(order);
         return ResponseEntity.ok().body("{\"respons\": \"Success\"}");
     }
 
