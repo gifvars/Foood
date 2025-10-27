@@ -182,16 +182,33 @@ services:
     command:
       - start-dev
     environment:
-      KC_DB: dev-mem
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://authdb:5432/auth_db
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_SPI_EMAIL_TEMPLATE_PROVIDER: freemarker
+      KC_SPI_EMAIL_SENDER_HOST: mailhog
+      KC_SPI_EMAIL_SENDER_PORT: 1025
+      KC_SPI_EMAIL_SENDER_FROM: no-reply@local.dev
     ports:
       - 8080:8080
     depends_on:
       - authdb
+      - mailhog
     networks:
       - food_network
 
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    ports:
+      - 1025:1025   # SMTP port (Keycloak will send emails here)
+      - 8025:8025   # Web UI to read emails
+    networks:
+      - food_network
+    restart: unless-stopped
 # ----------------------------
 # Networks & Volumes
 # ----------------------------

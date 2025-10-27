@@ -1,4 +1,0 @@
-package com.foood.commons.dto;
-
-public record Address(String houseNo, String apartmentNo, String street, String postCode, String city, String country) {
-}
