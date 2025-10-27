@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.15.xsd">
+
+    <changeSet id="001-create-product-table" author="shakir">
+        <createTable tableName="product">
+
+            <column name="id" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="restaurant_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="TEXT"/>
+
+            <column name="additional_info" type="TEXT"/>
+
+            <column name="ingredient" type="TEXT"/>
+
+            <column name="price" type="DECIMAL(10,2)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="discount_percentage" type="DOUBLE PRECISION" defaultValueNumeric="0.0"/>
+
+            <column name="category" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="size" type="VARCHAR(50)"/>
+
+            <column name="weight" type="BIGINT"/>
+
+            <column name="thumbnail" type="VARCHAR(500)"/>
+
+        </createTable>
+
+        <rollback>
+            <dropTable tableName="product"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

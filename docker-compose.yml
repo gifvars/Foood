@@ -130,8 +130,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: product_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
+      MYSQL_USER: product_user
+      MYSQL_PASSWORD: product_pass
     ports:
       - 3310:3306
     volumes:
