@@ -1,6 +1,7 @@
 package com.foood.register.order.kafka;
 
-import com.foood.commons.dto.Order;
+
+import com.foood.register.order.model.Order;
 import order.events.CartItem;
 import order.events.OrderEvent;
 import org.slf4j.Logger;
@@ -21,10 +22,10 @@ public class KafkaProducer {
     }
 
     public void sendOrderEvent(Order order) {
-        var cartItems = order.orderItems().stream().map(cartitem -> CartItem.newBuilder()
-                .setProductId(cartitem.productId())
-                .setQuantity(cartitem.quantity())
-                .setTotalPrice(cartitem.totalPrice().longValue())
+        var cartItems = order.getOrderItems().stream().map(cartitem -> CartItem.newBuilder()
+                .setProductId(cartitem.getProductId())
+                .setQuantity(cartitem.getQuantity())
+                .setTotalPrice(cartitem.getTotalPrice().longValue())
                 .build()).toList();
         var event = OrderEvent.newBuilder()
                 .addAllOrderItems(cartItems)
