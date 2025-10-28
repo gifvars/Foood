@@ -153,6 +153,7 @@ services:
       - 2181:2181
     networks:
       - food_network
+    restart: unless-stopped
 
   # ----------------------------
   # Kafka Broker
@@ -172,6 +173,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - food_network
+    restart: unless-stopped
 
   # ----------------------------
   # Keycloak
@@ -199,6 +201,7 @@ services:
       - mailhog
     networks:
       - food_network
+    restart: unless-stopped
 
   mailhog:
     image: mailhog/mailhog:latest
