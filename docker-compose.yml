@@ -1,0 +1,232 @@
+services:
+  # ----------------------------
+  # Auth DB
+  # ----------------------------
+  authdb:
+    image: postgres:16
+    container_name: auth_postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: auth_db
+    ports:
+      - 5432:5432
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    networks:
+      - food_network
+    restart: unless-stopped
+
+
+  # ----------------------------
+  # User DB
+  # ----------------------------
+  userdb:
+    image: mongo:7.0
+    container_name: user_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: user_db
+    ports:
+      - 27018:27017
+    volumes:
+      - user_data:/data/db
+    networks:
+      - food_network
+    restart: unless-stopped
+    # ----------------------------
+    # Restaurant DB
+    # ----------------------------
+  restaurantdb:
+    image: mongo:7.0
+    container_name: restaurant_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: restaurant_db
+    ports:
+      - 27019:27017
+    volumes:
+      - restaurant_data:/data/db
+    networks:
+      - food_network
+    restart: unless-stopped
+  # ----------------------------
+  # Drive DB
+  # ----------------------------
+  drivedb:
+    image: mongo:7.0
+    container_name: drive_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: drive_db
+    ports:
+      - 27020:27017
+    volumes:
+      - drive_data:/data/db
+    networks:
+      - food_network
+    restart: unless-stopped
+  # ----------------------------
+  # Cart DB
+  # ----------------------------
+  cartdb:
+    image: mysql:8.0
+    container_name: cart_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: cart_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      - cart_data:/var/lib/mysql
+    networks:
+      - food_network
+    restart: unless-stopped
+  # ----------------------------
+  # Order DB
+  # ----------------------------
+  orderdb:
+    image: mysql:8.0
+    container_name: order_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - 3308:3306
+    volumes:
+      - order_data:/var/lib/mysql
+    networks:
+      - food_network
+    restart: unless-stopped
+  # ----------------------------
+  # Restaurant Order DB
+  # ----------------------------
+  restaurantorderdb:
+    image: mysql:8.0
+    container_name: restaurant_order_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: restaurant_order_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - 3309:3306
+    volumes:
+      - restaurant_order_data:/var/lib/mysql
+    networks:
+      - food_network
+    restart: unless-stopped
+  # ----------------------------
+  # Product DB
+  # ----------------------------
+  productdb:
+    image: mysql:8.0
+    container_name: product_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: product_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - 3310:3306
+    volumes:
+      - product_data:/var/lib/mysql
+    networks:
+      - food_network
+    restart: unless-stopped
+
+  # ----------------------------
+  # Zookeeper (for Kafka)
+  # ----------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+    networks:
+      - food_network
+
+  # ----------------------------
+  # Kafka Broker
+  # ----------------------------
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+    networks:
+      - food_network
+  #
+  # Kafka-UI
+  #
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - 9081:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+      - zookeeper
+    networks:
+      - food_network
+
+  # ----------------------------
+  # Keycloak
+  # ----------------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    command:
+      - start-dev
+    environment:
+      KC_DB: dev-mem
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8080:8080
+    depends_on:
+      - authdb
+    networks:
+      - food_network
+
+# ----------------------------
+# Networks & Volumes
+# ----------------------------
+networks:
+  food_network:
+    driver: bridge
+
+volumes:
+  auth_data:
+  user_data:
+  restaurant_data:
+  drive_data:
+  cart_data:
+  order_data:
+  restaurant_order_data:
+  product_data:
+
