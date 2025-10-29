@@ -3,7 +3,9 @@ package com.foood.register.order.service;
 import com.foood.register.order.model.CartItem;
 import com.foood.register.order.model.Order;
 import com.foood.register.order.model.OrderStatus;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Dto2EntityTranslator {
 
     private CartItem translateCartItem(com.foood.commons.dto.CartItem cartItem){

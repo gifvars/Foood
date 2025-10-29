@@ -1,0 +1,26 @@
+{
+  "type": "Compass Connections",
+  "version": {
+    "$numberInt": "1"
+  },
+  "connections": [
+    {
+      "id": "1428fb3e-5654-43ba-a225-33674ba59c17",
+      "lastUsed": {
+        "$date": {
+          "$numberLong": "1761556819136"
+        }
+      },
+      "favorite": {
+        "name": "foood"
+      },
+      "savedConnectionType": "favorite",
+      "connectionOptions": {
+        "connectionString": "mongodb://root:password@localhost:27020,localhost:27020/",
+        "oidc": {
+          "serializedState": "eyJvaWRjUGx1Z2luU3RhdGVWZXJzaW9uIjoxLCJzdGF0ZSI6W119"
+        }
+      }
+    }
+  ]
+}
