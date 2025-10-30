@@ -15,4 +15,10 @@ public class RestExceptionHandler {
         ErrorModel errorModel = new ErrorModel(ex.getMessage(), HttpStatus.CONFLICT.value());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorModel);
     }
+
+    @ExceptionHandler(HttpClientErrorException.Unauthorized.class)
+    public ResponseEntity<Object> handleClientUnauthorizedException(HttpClientErrorException.Unauthorized ex){
+        ErrorModel errorModel = new ErrorModel(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorModel);
+    }
 }

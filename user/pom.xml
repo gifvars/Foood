@@ -73,7 +73,7 @@
                     <outputDirectory>
                         target
                     </outputDirectory>
-                    <mainClass>com.foood.user.MainApplication</mainClass>
+                    <mainClass>com.foood.user.UserSvcApplication</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -83,7 +83,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.foood.user.MainApplication</mainClass>
+                            <mainClass>com.foood.user.UserSvcApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
