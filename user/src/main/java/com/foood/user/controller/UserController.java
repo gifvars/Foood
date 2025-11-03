@@ -1,5 +1,6 @@
 package com.foood.user.controller;
 
+import com.foood.commons_svc.dto.auth.RefreshTokenRequest;
 import com.foood.commons_svc.dto.auth.RegisterUserRequest;
 import com.foood.commons_svc.dto.auth.SignInRequest;
 import com.foood.commons_svc.dto.auth.TokenResponse;
@@ -34,6 +35,9 @@ public class UserController {
     private String clientId;
     @Value("${keycloak.credentials.secret}")
     private String client_secret;
+
+    private final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
+
 
     @PostMapping("/register")
     public UserResponse register(@RequestBody RegisterUserRequest registerUserRequest) {
@@ -70,5 +74,24 @@ public class UserController {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(requestData).retrieve().body(LinkedHashMap.class);
         return VerifyTokenResponseTransformer.transform((result));
+    }
+
+    @PostMapping("/refreshToken")
+    public TokenResponse refreshToken(@RequestBody RefreshTokenRequest request) {
+        String token = request.refresh_token();
+        RefreshTokenRequest modifiedRequest = new RefreshTokenRequest(clientId, REFRESH_TOKEN_GRANT_TYPE, token);
+        System.out.println(modifiedRequest);
+        MultiValueMap<String, String> requestData = new LinkedMultiValueMap<>();
+        requestData.add("refresh_token", modifiedRequest.refresh_token());
+        requestData.add("grant_type", REFRESH_TOKEN_GRANT_TYPE);
+        requestData.add("client_id", clientId);
+        requestData.add("client_secret", client_secret);
+        RestClient restClient = RestClient.create();
+        var result = restClient.post()
+                .uri("http://" + hostname + ":8080/realms/foood/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(requestData).retrieve().body(LinkedHashMap.class);
+        System.out.println(result);
+        return TokenResponseTransformer.transform(result);
     }
 }

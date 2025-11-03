@@ -124,10 +124,7 @@ function attachSignInHandler() {
         try {
             const response = await signInSubmit(request);
             console.log("Sign in success: ", response);
-            state.access_token = response.access_token;
-            state.refresh_token = response.refresh_token;
-            state.token_expires += response.expires_in;
-            state.refresh_expires += response.refresh_expires_in;
+            handleLoginSuccess(response);
             const appDiv = document.getElementById('app');
             const htmlString = `<h1>Signed In!</h1>
                                 <p>Good news! You successfully signed in!</p>`;
@@ -140,6 +137,13 @@ function attachSignInHandler() {
             hideLoadIndication();
         }
     })
+}
+
+function handleLoginSuccess(response) {
+    state.access_token = response.access_token;
+    state.refresh_token = response.refresh_token;
+    state.token_expires = (Date.now() / 1000) + response.expires_in;
+    state.refresh_expires = (Date.now() / 1000) + response.refresh_expires_in;
 }
 
 async function signInSubmit(request) {
@@ -252,7 +256,6 @@ async function enforceAuthorization(hash) {
         await refreshToken();
         return true;
     } 
-    // TODO: 5. If refresh_token has expired or an error occurs, redirect to login.
     catch (err) {
         console.error(err);
         denyAccess();
@@ -277,6 +280,16 @@ async function validateToken() {
     return tokenResponse.ok || result.active;
 }
 
-function refreshToken() {
-    throw new Error("Not implemented: refreshToken");
+async function refreshToken() {
+    const refreshResponse = await fetch("http://127.0.0.1:8089/refreshToken", {
+        method: "POST",
+        body: JSON.stringify({ refresh_token: state.refresh_token }),
+        headers: { "Content-type": "application/json" },
+    });
+
+    const result = await refreshResponse.json();
+
+    console.log(result);
+
+    handleLoginSuccess(result);
 }

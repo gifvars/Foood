@@ -23,11 +23,13 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, Environment environment) throws Exception {
-        System.out.println("Resolved Issuer URI: " + environment.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri"));
+        System.out.println("Resolved Issuer URI: " +
+                environment.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri"));
         http.cors(c -> c.configurationSource(
                 req -> {
                     var cfg = new CorsConfiguration();
-                    cfg.setAllowedOrigins(List.of("https://user:8089", "http://localhost:8089")); // Allows for SPA origin
+                    cfg.setAllowedOrigins(
+                            List.of("https://user:8089", "http://localhost:8089")); // Allows for SPA origin
                     cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                     cfg.setAllowCredentials(true);
@@ -36,7 +38,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/health", "/index", "/signIn", "/register", "/about", "/validateToken").permitAll()
+                        .requestMatchers("/actuator/health", "/index", "/signIn", "/register", "/about",
+                                "/validateToken", "/refreshToken").permitAll()
                         .requestMatchers("app.js", "/static/*.js", "/static/*.css", "/favicon.icon").permitAll()
                         .anyRequest().authenticated()
                 )

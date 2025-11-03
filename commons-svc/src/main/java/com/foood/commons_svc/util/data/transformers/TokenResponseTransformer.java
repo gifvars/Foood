@@ -12,7 +12,8 @@ public class TokenResponseTransformer {
         long refresh_expires_in  =  (Integer) map.get("refresh_expires_in");
         String refresh_token = (String) map.get("refresh_token");
         String token_type = (String) map.get("token_type");
-        long not_before_policy  = (Integer) map.get("not_before_policy");
+        long not_before_policy  = (Integer)
+                (map.get("not_before_policy") != null ? map.get("not_before_policy") : map.get("not-before-policy"));
         String session_state  = (String) map.get("session_state");
         String scope =  (String) map.get("scope");
 
