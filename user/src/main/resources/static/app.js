@@ -240,18 +240,19 @@ async function enforceAuthorization(hash) {
         }
     }
 
-    // 2. Check access_token validity. If valid, run it past Keycloak to confirm, return true if accepted.
+    // 2. Check access_token validity.
     const token_valid = await validateToken();
+    // 3. If the token is valid, make a request to Keycloak to confirm.
     if (token_valid) {
         return true;
     }
 
-    // 3. If expired, use refresh_token to get a new token.
+    // 4. If expired, use refresh_token to get a new token.
     try {
         await refreshToken();
         return true;
     } 
-    // TODO: 4. If refresh_token has expired or an error occurs, redirect to login.
+    // TODO: 5. If refresh_token has expired or an error occurs, redirect to login.
     catch (err) {
         console.error(err);
         denyAccess();
