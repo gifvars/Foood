@@ -213,11 +213,12 @@ async function renderContent() {
     }
     const hash = window.location.hash || '#/';
     const routeFn = routes[hash];
+    appDiv.innerHTML = routeFn ? routeFn() : "<h1>Page not found</h1>";
+    if (!routeFn) {
+        return;
+    }
     const validAuth = await enforceAuthorization(hash);
-    if (validAuth) {
-        // TODO: Short-circuit auth check if the page isn't found (the 404 page should be public).
-        appDiv.innerHTML = routeFn ? routeFn() : "<h1>Page not found</h1>";
-    
+    if (validAuth) {    
         const handlerFn = handlers[hash];
         if (handlerFn) {
             handlerFn();
