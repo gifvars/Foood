@@ -23,8 +23,8 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http, Environment environment) throws Exception {
-        System.out.println("Resolved Issuer URI: " +
-                environment.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri"));
+        System.out.println("Resolved Issuer URI: '" +
+                environment.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri") + "'");
         http.cors(c -> c.configurationSource(
                 req -> {
                     var cfg = new CorsConfiguration();
