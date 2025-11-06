@@ -10,10 +10,10 @@
 	</parent>
 
 	<groupId>com.foood.order</groupId>
-	<artifactId>order</artifactId>
+	<artifactId>order-svc</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-	<name>register-order</name>
+	<name>order-svc</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

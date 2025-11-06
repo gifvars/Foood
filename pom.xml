@@ -16,7 +16,7 @@
     <modules>
         <module>commons-svc</module>
         <module>auth-svc</module>
-        <module>order</module>
+        <module>order-svc</module>
         <module>user</module>
     </modules>
 </project>
