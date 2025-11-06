@@ -1,7 +1,7 @@
 package com.foood.register.order.controller;
 
 
-import com.foood.commons.dto.Order;
+import com.foood.commons_svc.dto.Order;
 import com.foood.register.order.service.RegisterOrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

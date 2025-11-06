@@ -1,6 +1,6 @@
 package com.foood.register.order.model;
 
-import com.foood.commons.enums.OrderStatus;
+import com.foood.commons_svc.enums.OrderStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;

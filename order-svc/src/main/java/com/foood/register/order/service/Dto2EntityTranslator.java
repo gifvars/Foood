@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Dto2EntityTranslator {
 
-    private CartItem translateCartItem(com.foood.commons.dto.CartItem cartItem){
+    private CartItem translateCartItem(com.foood.commons_svc.dto.CartItem cartItem){
 
         return new CartItem.Builder()
                 .setTotalPrice(cartItem.totalPrice())
@@ -16,7 +16,7 @@ public class Dto2EntityTranslator {
                 .build();
     }
 
-    public Order translateOrder(com.foood.commons.dto.Order order){
+    public Order translateOrder(com.foood.commons_svc.dto.Order order){
         return new Order.Builder()
                 .setCreatedAt(order.createdAt())
                 .setDiscountAmount(order.discountAmount())

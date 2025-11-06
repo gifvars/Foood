@@ -1,6 +1,6 @@
 package com.foood.register.order.service;
 
-import com.foood.commons.dto.Order;
+import com.foood.commons_svc.dto.Order;
 import com.foood.register.order.kafka.KafkaProducer;
 import com.foood.register.order.repository.OrderRepository;
 import jakarta.validation.constraints.NotNull;
