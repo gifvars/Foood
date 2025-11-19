@@ -75,9 +75,10 @@ public class AuthServiceImpl implements AuthService{
         credential.setValue(request.password());
         usersResource.get(userId).resetPassword(credential);
 
-        RoleRepresentation role = keycloak.realm(realm).roles().get(request.userType()).toRepresentation();
-        usersResource.get(userId).roles().realmLevel().add(List.of(role));
-        usersResource.get(userId).sendVerifyEmail();
+        // TODO
+        //RoleRepresentation role = new RoleRepresentation().;//keycloak.realm(realm).roles().get(request.userType()).toRepresentation();
+        //usersResource.get(userId).roles().realmLevel().add(List.of(role));
+        //usersResource.get(userId).sendVerifyEmail();
 
         UserRepresentation createdUser = usersResource.get(userId).toRepresentation();
         List<Role> assignedRoles = usersResource.get(userId)
