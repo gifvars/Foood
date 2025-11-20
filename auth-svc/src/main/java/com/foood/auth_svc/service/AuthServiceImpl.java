@@ -5,13 +5,14 @@ import com.foood.commons_svc.dto.auth.SignInRequest;
 import com.foood.commons_svc.dto.auth.TokenResponse;
 import com.foood.commons_svc.dto.auth.UserResponse;
 import com.foood.commons_svc.enums.Role;
-import com.foood.commons_svc.exception.*;
-import com.foood.commons_svc.exception.IllegalStateException;
+import com.foood.commons_svc.exception.AuthenticationServerException;
+import com.foood.commons_svc.exception.InvalidCredentialsException;
+import com.foood.commons_svc.exception.KeycloakCommunicationException;
+import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
-import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -49,38 +50,50 @@ public class AuthServiceImpl implements AuthService{
     @Value("${keycloak.credentials.secret}")
     private String client_secret;
 
+
     @Override
-    public UserResponse registerUser(RegisterUserRequest request) {
+    public UserResponse registerUser(RegisterUserRequest request){
+       UsersResource usersResource = keycloak.realm(realm).users();
+
+        // 1. Skapa användare
         UserRepresentation user = new UserRepresentation();
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
         user.setUsername(request.email());
         user.setEmail(request.email());
         user.setEnabled(true);
-        user.setEmailVerified(false);
 
-        UsersResource usersResource = keycloak.realm(realm).users();
         Response response = usersResource.create(user);
-        if (response.getStatus() == 409) {
-            throw new IllegalStateException("Email already exits!");
-        }
         if (response.getStatus() != 201) {
-            throw new EntityNotFoundException("Failed to create user in Keycloak: " + response.getStatus());
+            throw new RuntimeException("Misslyckades att skapa användare: " + response.getStatusInfo());
         }
 
         String userId = CreatedResponseUtil.getCreatedId(response);
-        CredentialRepresentation credential = new CredentialRepresentation();
-        credential.setTemporary(false);
-        credential.setType(CredentialRepresentation.PASSWORD);
-        credential.setValue(request.password());
-        usersResource.get(userId).resetPassword(credential);
+        System.out.println("Användare skapad med ID: " + userId);
 
-        // TODO
-        //RoleRepresentation role = new RoleRepresentation().;//keycloak.realm(realm).roles().get(request.userType()).toRepresentation();
-        //usersResource.get(userId).roles().realmLevel().add(List.of(role));
-        //usersResource.get(userId).sendVerifyEmail();
-
+        // 2. Kontrollera att användaren finns
         UserRepresentation createdUser = usersResource.get(userId).toRepresentation();
+        if (createdUser == null) {
+            throw new RuntimeException("Användaren kunde inte hämtas efter skapande.");
+        }
+
+        // 3. Hämta rollen och kontrollera att den finns
+        RoleRepresentation role;
+        try {
+            role = keycloak.realm(realm).roles().get("RESTAURANT").toRepresentation();
+        } catch (NotFoundException e) {
+            throw new RuntimeException("Rollen '" + "RESTAURANT" + "' finns inte i realm '" + realm + "'.");
+        }
+
+        // 4. Tilldela rollen
+        usersResource.get(userId).roles().realmLevel().add(Collections.singletonList(role));
+        System.out.println("Roll '" + "RESTAURANT" + "' tilldelad till användaren.");
+
+        // 5. Skicka verifieringsmail (kräver SMTP-konfiguration)
+        try {
+            usersResource.get(userId).sendVerifyEmail();
+            System.out.println("Verifieringsmail skickat.");
+        } catch (Exception e) {
+            System.err.println("Kunde inte skicka verifieringsmail: " + e.getMessage());
+        }
         List<Role> assignedRoles = usersResource.get(userId)
                 .roles()
                 .realmLevel()
@@ -89,9 +102,7 @@ public class AuthServiceImpl implements AuthService{
                 .map(RoleRepresentation::getName)
                 .filter(name -> name.equals("CUSTOMER") || name.equals("DRIVER") || name.equals("RESTAURANT"))
                 .map(Role::valueOf)
-                .collect(Collectors.toList());
-
-        // save
+                .toList();
 
         return   new UserResponse(
                 createdUser.getId(),
@@ -99,7 +110,6 @@ public class AuthServiceImpl implements AuthService{
                 createdUser.getLastName(),
                 createdUser.getEmail(),
                 assignedRoles);
-
     }
 
     @Override
