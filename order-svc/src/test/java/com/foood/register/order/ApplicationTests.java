@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 @SpringBootTest
-// @EnableWebMvc
-// @AutoConfiguration
 class ApplicationTests {
 
     @Autowired

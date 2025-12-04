@@ -2,20 +2,20 @@ package com.foood.register.order;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-import org.testng.annotations.Ignore;
-
 
 
 public class OrderServiceTest {
 
     private Logger logger = LogManager.getLogger(OrderServiceTest.class);;
-    @Ignore
+
     @Test
+    @Disabled("Run order micro service!")
     public void registerOrderWithSuccess(){
 
         RestTemplate restTemplate = new RestTemplate();

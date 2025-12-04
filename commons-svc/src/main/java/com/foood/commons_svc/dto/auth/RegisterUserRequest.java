@@ -9,7 +9,7 @@ public record RegisterUserRequest(
         String firstName,
         @NotBlank(message = "Last name cannot be blank")
         String lastName,
-        @Pattern(regexp = "CUSTOMER|RESTUARANT|DRIVER", message = "Invalid category")
+        @Pattern(regexp = "CUSTOMER|RESTAURANT|DRIVER", message = "Invalid category")
         String userType,
         @Email(message = "Invalid email format")
         @NotBlank(message = "Email cannot be blank")

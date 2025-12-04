@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.CreatedResponseUtil;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Autowired
     private Keycloak keycloak;
+
     @Autowired
     private String realm;
 
@@ -47,9 +49,9 @@ public class AuthServiceImpl implements AuthService{
 
     @Value("${keycloak.resource}")
     private String clientId;
+
     @Value("${keycloak.credentials.secret}")
     private String client_secret;
-
 
     @Override
     public UserResponse registerUser(RegisterUserRequest request){
@@ -59,7 +61,16 @@ public class AuthServiceImpl implements AuthService{
         UserRepresentation user = new UserRepresentation();
         user.setUsername(request.email());
         user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+
         user.setEnabled(true);
+
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(request.password());
+        credential.setTemporary(false);
+        user.setCredentials(Collections.singletonList(credential));
 
         Response response = usersResource.create(user);
         if (response.getStatus() != 201) {

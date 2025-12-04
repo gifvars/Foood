@@ -25,7 +25,8 @@ public class KafkaProducer {
         var cartItems = order.getOrderItems().stream().map(cartitem -> CartItem.newBuilder()
                 .setProductId(cartitem.getProductId())
                 .setQuantity(cartitem.getQuantity())
-                .setTotalPrice(cartitem.getTotalPrice().longValue())
+                .setTotalPrice(cartitem.
+                        getTotalPrice().longValue())
                 .build()).toList();
         var event = OrderEvent.newBuilder()
                 .addAllOrderItems(cartItems)

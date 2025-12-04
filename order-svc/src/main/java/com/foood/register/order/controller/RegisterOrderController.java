@@ -4,11 +4,14 @@ package com.foood.register.order.controller;
 import com.foood.commons_svc.dto.Order;
 import com.foood.register.order.service.RegisterOrderService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-// TODO @CrossOrigin(origins = "http://localhost:5173")
+
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowedHeaders = "*",
+        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
+)
 @RestController
 public class RegisterOrderController {
 
